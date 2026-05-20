@@ -155,6 +155,8 @@
             z-index: 1000;
             border-bottom: 1px solid rgba(212, 175, 55, 0.1);
             transition: var(--transition);
+            transform: translate3d(0, 0, 0);
+            -webkit-transform: translate3d(0, 0, 0);
         }
 
         .nav-container {
@@ -1259,6 +1261,22 @@
             }
             .whatsapp-tooltip {
                 display: none;
+            }
+            .hero-btns {
+                position: relative;
+                z-index: 10;
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+                width: 100%;
+                max-width: 320px;
+            }
+            .hero-btns .btn {
+                width: 100%;
+                text-align: center;
+                white-space: nowrap;
+                position: relative;
+                z-index: 10;
             }
         }
 
