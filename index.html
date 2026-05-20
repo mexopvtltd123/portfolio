@@ -9,16 +9,30 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Tailwind CSS CDN (with Preflight disabled to prevent conflicts) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+            }
+        }
+    </script>
     <style>
         :root {
-            --color-black: #141c1a;
-            --color-black-light: #1d2624;
+            --color-black: #0c100e;
+            --color-black-light: #131a18;
             --color-gold: #cba043;
             --color-gold-hover: #e6c56a;
+            --color-gold-bright: #ffd700;
+            --color-gold-glow: rgba(203, 160, 67, 0.4);
+            --color-glass: rgba(12, 16, 14, 0.7);
+            --border-glass: rgba(203, 160, 67, 0.2);
             --color-white: #ffffff;
             --color-gray: #a6b1ae;
             --font-main: 'Outfit', sans-serif;
             --transition: all 0.3s ease;
+            --transition-smooth: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         * {
@@ -593,6 +607,604 @@
         .modal-bullets li strong {
             color: var(--color-white);
         }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--color-black);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-gold);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-gold-hover);
+        }
+
+        /* Ambient Glow Gradients */
+        .ambient-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(203, 160, 67, 0.04) 0%, rgba(0,0,0,0) 70%);
+            z-index: -3;
+            pointer-events: none;
+            filter: blur(80px);
+            animation: floatGlow 15s infinite alternate ease-in-out;
+            top: 10%;
+            left: -10%;
+        }
+        .ambient-glow-2 {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.02) 0%, rgba(0,0,0,0) 70%);
+            z-index: -3;
+            pointer-events: none;
+            filter: blur(60px);
+            animation: floatGlow2 20s infinite alternate ease-in-out;
+            bottom: 10%;
+            right: -10%;
+        }
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(15%, 15%) scale(1.15); }
+        }
+        @keyframes floatGlow2 {
+            0% { transform: translate(0, 0) scale(1.1); }
+            100% { transform: translate(-15%, -15%) scale(0.9); }
+        }
+
+        /* Custom Cursor */
+        .custom-cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--color-gold-bright);
+            position: fixed;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+            transition: width 0.2s, height 0.2s;
+            display: none;
+        }
+        .custom-cursor-ring {
+            width: 36px;
+            height: 36px;
+            border: 1.5px solid var(--color-gold);
+            position: fixed;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9998;
+            pointer-events: none;
+            transition: width 0.3s, height 0.3s, border-color 0.3s, background-color 0.3s;
+            box-shadow: 0 0 10px var(--color-gold-glow);
+            display: none;
+        }
+        @media (min-width: 769px) {
+            .custom-cursor-dot, .custom-cursor-ring {
+                display: block;
+            }
+            body, a, button, select, textarea, input, .service-card, .chat-chip {
+                cursor: none !important;
+            }
+        }
+
+        /* Particles Canvas */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* Premium Loader */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #050706;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.8s;
+        }
+        .loader-logo-container {
+            position: relative;
+            margin-bottom: 2rem;
+            animation: pulseLogo 2s infinite ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .loader-logo-wrapper {
+            position: relative;
+            overflow: hidden;
+            width: 140px;
+            height: 140px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .loader-logo-wrapper img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            animation: metallic-glow 3s infinite ease-in-out;
+        }
+        .loader-logo-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 150%;
+            height: 100%;
+            background: linear-gradient(
+                120deg,
+                rgba(255, 255, 255, 0) 30%,
+                rgba(255, 255, 255, 0.8) 48%,
+                rgba(255, 255, 255, 0.95) 50%,
+                rgba(255, 255, 255, 0.8) 52%,
+                rgba(255, 255, 255, 0) 70%
+            );
+            animation: shimmer-shine 2.2s infinite ease-in-out;
+            pointer-events: none;
+            -webkit-mask: url('4567.png') no-repeat center / contain;
+            mask: url('4567.png') no-repeat center / contain;
+        }
+        .loader-brand {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: var(--color-white);
+            text-transform: uppercase;
+        }
+        .loader-brand span {
+            color: var(--color-gold);
+        }
+        .loader-bar-bg {
+            width: 200px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.05);
+            position: relative;
+            border-radius: 1px;
+            overflow: hidden;
+        }
+        .loader-bar {
+            position: absolute;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, var(--color-gold), var(--color-gold-bright));
+            animation: loadProgress 2.5s cubic-bezier(0.1, 0.8, 0.1, 1) forwards;
+            box-shadow: 0 0 8px var(--color-gold-bright);
+        }
+        @keyframes shimmer-shine {
+            0% { left: -150%; }
+            100% { left: 150%; }
+        }
+        @keyframes metallic-glow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(203, 160, 67, 0.35)) scale(0.98); }
+            50% { filter: drop-shadow(0 0 28px rgba(203, 160, 67, 0.8)) scale(1.02); }
+        }
+        @keyframes loadProgress {
+            0% { width: 0%; }
+            50% { width: 65%; }
+            100% { width: 100%; }
+        }
+
+        /* Button Shine Animation */
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
+            transition: none;
+        }
+        .btn:hover::after {
+            animation: btnShine 1s ease-in-out;
+        }
+        @keyframes btnShine {
+            100% { left: 200%; }
+        }
+
+        /* Mouse follow cards glow */
+        .glow-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .glow-card::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0; left: 0;
+            background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(203, 160, 67, 0.12), transparent 40%);
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .glow-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Heading Text Reveal */
+        .reveal-text {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .reveal-text span {
+            display: inline-block;
+            transform: translateY(100%);
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .reveal-text.active span {
+            transform: translateY(0);
+        }
+
+
+        /* Stats Section */
+        #stats {
+            background-color: var(--color-black-light);
+            padding: 80px 0;
+            border-top: 1px solid rgba(203, 160, 67, 0.1);
+            border-bottom: 1px solid rgba(203, 160, 67, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            text-align: center;
+        }
+        .stat-item h3 {
+            font-size: 3.5rem;
+            color: var(--color-gold);
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+        .stat-item p {
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            color: var(--color-white);
+        }
+
+        /* Floating Chatbot */
+        #mexo-chatbot-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-gold), var(--color-gold-hover));
+            box-shadow: 0 5px 25px rgba(203, 160, 67, 0.4);
+            border: 2px solid rgba(255,255,255,0.1);
+            color: var(--color-black);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s;
+        }
+        #mexo-chatbot-btn:hover {
+            transform: scale(1.08) rotate(5deg);
+            box-shadow: 0 8px 30px rgba(203, 160, 67, 0.6);
+        }
+        #mexo-chatbot-btn svg {
+            width: 28px;
+            height: 28px;
+            stroke-width: 2;
+        }
+        #mexo-chatbot {
+            position: fixed;
+            bottom: 105px;
+            right: 30px;
+            width: 380px;
+            height: 520px;
+            border-radius: 16px;
+            background: rgba(12, 16, 14, 0.85);
+            border: 1.5px solid var(--border-glass);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.6);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: translateY(30px) scale(0.9);
+            opacity: 0;
+            visibility: hidden;
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s, visibility 0.4s;
+        }
+        #mexo-chatbot.active {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+        .chat-header {
+            padding: 1.2rem;
+            background: rgba(20, 28, 26, 0.9);
+            border-bottom: 1.5px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .chat-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--color-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-black);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+        .chat-header h4 {
+            color: var(--color-white);
+            font-size: 1.05rem;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+        .chat-status {
+            font-size: 0.75rem;
+            color: var(--color-gold);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .chat-status::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #00ff00;
+            box-shadow: 0 0 5px #00ff00;
+        }
+        .chat-close {
+            background: transparent;
+            border: none;
+            color: var(--color-gray);
+            font-size: 1.5rem;
+            line-height: 1;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .chat-close:hover {
+            color: var(--color-gold);
+        }
+        .chat-body {
+            flex: 1;
+            padding: 1.2rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .chat-message {
+            max-width: 80%;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            animation: messageFadeIn 0.3s ease forwards;
+        }
+        .chat-message.incoming {
+            background: rgba(255,255,255,0.05);
+            color: #ddd;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .chat-message.outgoing {
+            background: var(--color-gold);
+            color: var(--color-black);
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+            font-weight: 500;
+        }
+        .chat-message p {
+            color: inherit;
+            font-weight: inherit;
+            margin-bottom: 0;
+        }
+        .chat-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.5rem 1.2rem 1rem;
+        }
+        .chat-chip {
+            background: rgba(203, 160, 67, 0.1);
+            border: 1px solid rgba(203, 160, 67, 0.3);
+            color: var(--color-gold);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        .chat-chip:hover {
+            background: var(--color-gold);
+            color: var(--color-black);
+            border-color: var(--color-gold);
+        }
+        .chat-input-area {
+            padding: 1rem 1.2rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            gap: 10px;
+            background: rgba(10, 10, 10, 0.5);
+            align-items: center;
+        }
+        .chat-input {
+            flex: 1;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 10px 14px;
+            border-radius: 20px;
+            color: var(--color-white);
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        .chat-input:focus {
+            border-color: var(--color-gold);
+            background: rgba(255,255,255,0.05);
+        }
+        .chat-send-btn, .chat-voice-btn {
+            background: transparent;
+            border: none;
+            color: var(--color-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        .chat-send-btn:hover, .chat-voice-btn:hover {
+            background: rgba(203, 160, 67, 0.1);
+            color: var(--color-gold-hover);
+        }
+        .chat-voice-btn.listening {
+            color: #ff3b30;
+            background: rgba(255, 59, 48, 0.15);
+            animation: pulseRecord 1s infinite alternate;
+        }
+        .chat-send-btn svg, .chat-voice-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 10px 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            animation: messageFadeIn 0.3s ease;
+        }
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--color-gray);
+            animation: bounceDot 1.4s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounceDot {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-6px); }
+        }
+        @keyframes pulseRecord {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.4); }
+            100% { transform: scale(1.05); box-shadow: 0 0 10px 4px rgba(255, 59, 48, 0.2); }
+        }
+        @keyframes messageFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Floating WhatsApp Button */
+        #whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+        }
+        .whatsapp-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #25D366;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 25px rgba(37, 211, 102, 0.4);
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s;
+            position: relative;
+            border: none;
+            outline: none;
+            animation: floatPulse 2s infinite;
+        }
+        .whatsapp-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 8px 30px rgba(37, 211, 102, 0.6);
+        }
+        .whatsapp-btn svg {
+            width: 32px;
+            height: 32px;
+            fill: white;
+        }
+        .whatsapp-tooltip {
+            position: absolute;
+            left: 75px;
+            background: rgba(10, 10, 10, 0.85);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: opacity 0.3s, transform 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        #whatsapp-float:hover .whatsapp-tooltip {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        @keyframes floatPulse {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); }
+            70% { box-shadow: 0 0 0 12px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+        @keyframes whatsappBounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-15px); }
+            60% { transform: translateY(-7px); }
+        }
+        .whatsapp-bounce {
+            animation: whatsappBounce 1s ease-in-out;
+        }
 
         /* Responsive */
         @media (max-width: 900px) {
@@ -634,10 +1246,126 @@
             .social-buttons {
                 flex-direction: column;
             }
+            #mexo-chatbot {
+                bottom: 85px; right: 15px; left: 15px;
+                width: calc(100% - 30px);
+                height: 450px;
+            }
+            #mexo-chatbot-btn {
+                bottom: 20px; right: 20px;
+            }
+            #whatsapp-float {
+                bottom: 20px; left: 20px;
+            }
+            .whatsapp-tooltip {
+                display: none;
+            }
+        }
+
+        /* Marquee Scroller Custom Styles */
+        .marquee-container {
+            overflow: hidden;
+            width: 100%;
+            position: relative;
+        }
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            gap: 2rem;
+            animation: marquee-scroll 25s linear infinite;
+        }
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+        @keyframes marquee-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
     </style>
 </head>
 <body>
+
+    <!-- Premium Loader -->
+    <div id="loader">
+        <div class="loader-logo-container">
+            <div class="loader-logo-wrapper">
+                <img src="4567.png" alt="MEXO AUTO HUB Logo">
+            </div>
+            <div class="loader-brand">Mexo <span>AUTO HUB</span></div>
+        </div>
+        <div class="loader-bar-bg">
+            <div class="loader-bar"></div>
+        </div>
+    </div>
+
+    <!-- Custom Cursor Overlay -->
+    <div class="custom-cursor-dot" id="cursor-dot"></div>
+    <div class="custom-cursor-ring" id="cursor-ring"></div>
+
+    <!-- Background Elements -->
+    <canvas id="particle-canvas"></canvas>
+    <div class="ambient-glow"></div>
+    <div class="ambient-glow-2"></div>
+
+    <!-- Floating Chatbot Toggle Button -->
+    <button id="mexo-chatbot-btn" aria-label="Open Chatbot">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+    </button>
+
+    <!-- Sleek Glassmorphic Chatbot Window -->
+    <div id="mexo-chatbot">
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <div class="chat-avatar">M</div>
+                <div>
+                    <h4>MEXO AI Assistant</h4>
+                    <div class="chat-status">Online</div>
+                </div>
+            </div>
+            <button class="chat-close" id="chat-close-btn">&times;</button>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="chat-message incoming">
+                <p>👋 Welcome to MEXO AUTO HUB. How can I help you today?</p>
+            </div>
+        </div>
+        <div class="chat-suggestions">
+            <button class="chat-chip" onclick="handleSuggestion('Available Vehicles')">Available Vehicles</button>
+            <button class="chat-chip" onclick="handleSuggestion('Finance Details')">Finance Details</button>
+            <button class="chat-chip" onclick="handleSuggestion('Vehicle Import')">Vehicle Import</button>
+            <button class="chat-chip" onclick="handleSuggestion('Contact Us')">Contact Us</button>
+            <button class="chat-chip" onclick="handleSuggestion('Book Appointment')">Book Appointment</button>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." autocomplete="off">
+            <button class="chat-voice-btn" id="chat-voice-btn" title="Voice Input">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                    <line x1="12" y1="19" x2="12" y2="23"></line>
+                    <line x1="8" y1="23" x2="16" y2="23"></line>
+                </svg>
+            </button>
+            <button class="chat-send-btn" id="chat-send-btn" title="Send Message">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating WhatsApp Button -->
+    <div id="whatsapp-float">
+        <button class="whatsapp-btn" id="whatsapp-btn" onclick="openWhatsApp()" aria-label="Chat on WhatsApp">
+            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 2a14 14 0 0 0-11.9 21.3L2 29.5l6.4-2.1A14 14 0 1 0 16 2zm7.6 20.3c-.3.9-1.6 1.7-2.6 1.9-.7.1-1.6.2-4.6-1-3.8-1.5-6.2-5.4-6.4-5.7-.2-.3-1.6-2.1-1.6-4.1s1-2.9 1.4-3.3c.4-.4.8-.5 1-.5.3 0 .5.1.7.1.2 0 .5-.1.8.6.3.7 1 2.4 1.1 2.6.1.2.1.4 0 .6-.1.2-.2.3-.4.5-.2.2-.4.4-.6.6-.2.2-.4.4-.2.7.2.4.9 1.5 2 2.5 1.4 1.2 2.5 1.6 2.9 1.8.4.2.6.1.8-.1.2-.3.9-1.1 1.2-1.5.2-.4.4-.3.7-.2.3.1 2 1 2.4 1.2.4.2.6.3.7.5.1.2.1 1.1-.2 2z"/>
+            </svg>
+        </button>
+        <div class="whatsapp-tooltip">Chat with us instantly</div>
+    </div>
 
     <!-- Navigation -->
     <nav id="navbar">
@@ -682,13 +1410,53 @@
             <h2>About <span>Us</span></h2>
             <div class="about-content">
                 <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Premium Car">
+                    <img src="4568.png" alt="Premium Car">
                 </div>
                 <div class="about-text">
                     <p>At <strong>MEXO AUTO HUB</strong>, we redefine the vehicle importing experience. We specialize in bringing the world's most prestigious and reliable vehicles directly to your doorstep in Sri Lanka.</p>
                     <p>Our commitment is built on 100% transparency, offering vehicles with high auction grades and genuine mileage. We believe that importing your dream vehicle should be an exciting journey, not a stressful task.</p>
                     <p>From meticulous sourcing in Japan, Europe, and other global markets, to handling complex customs clearance and documentation, our expert team ensures a seamless, hassle-free process. Trust us to deliver excellence on four wheels.</p>
                     <a href="#contact" class="btn" style="margin-top: 1rem;">Start Your Import</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item" data-aos="zoom-in" data-aos-delay="100">
+                    <h3 class="counter" data-target="500">0</h3>
+                    <p>Vehicles Sourced</p>
+                </div>
+                <div class="stat-item" data-aos="zoom-in" data-aos-delay="200">
+                    <h3 class="counter" data-target="10">0</h3>
+                    <p>Years Experience</p>
+                </div>
+                <div class="stat-item" data-aos="zoom-in" data-aos-delay="300">
+                    <h3 class="counter" data-target="100">0</h3>
+                    <p>Genuine Mileage %</p>
+                </div>
+                <div class="stat-item" data-aos="zoom-in" data-aos-delay="400">
+                    <h3 class="counter" data-target="3">0</h3>
+                    <p>Branch Networks</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Imports Collection Section -->
+    <section id="imports" style="background-color: var(--color-black-light); padding: 80px 0; border-top: 1px solid rgba(203, 160, 67, 0.1); border-bottom: 1px solid rgba(203, 160, 67, 0.1); position: relative; z-index: 1;">
+        <div class="container">
+            <h2 data-aos="fade-up" style="text-align: center; text-transform: uppercase; margin-bottom: 1rem;">OUR IMPORTS <span>COLLECTION</span></h2>
+            <p style="text-align: center; max-width: 600px; margin: 0 auto 3rem; font-size: 1.1rem; color: var(--color-gray);" data-aos="fade-up" data-aos-delay="100">
+                Premium brands we import from around the UK & Japan
+            </p>
+
+            <div class="marquee-container" data-aos="fade-up" data-aos-delay="200">
+                <div id="brand-marquee-track" class="marquee-track">
+                    <!-- Brand cards populated dynamically via JS to guarantee gapless infinity loop -->
                 </div>
             </div>
         </div>
@@ -1042,6 +1810,500 @@
                 document.body.style.overflow = '';
             }
         });
+
+        // Premium Loader Fade-out
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            if (loader) {
+                setTimeout(() => {
+                    loader.style.opacity = '0';
+                    loader.style.visibility = 'hidden';
+                }, 500);
+            }
+        });
+
+        // Custom Cursor Physics & Interaction
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorRing = document.getElementById('cursor-ring');
+
+        if (cursorDot && cursorRing) {
+            let mouseX = 0, mouseY = 0;
+            let ringX = 0, ringY = 0;
+
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                cursorDot.style.left = mouseX + 'px';
+                cursorDot.style.top = mouseY + 'px';
+            });
+
+            const animateCursor = () => {
+                const lerpFactor = 0.15;
+                ringX += (mouseX - ringX) * lerpFactor;
+                ringY += (mouseY - ringY) * lerpFactor;
+                cursorRing.style.left = ringX + 'px';
+                cursorRing.style.top = ringY + 'px';
+                requestAnimationFrame(animateCursor);
+            };
+            animateCursor();
+
+            // Hover interactions expand cursor
+            const interactives = document.querySelectorAll('a, button, select, input, textarea, .service-card, .fleet-card, .chat-chip');
+            interactives.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursorRing.style.width = '50px';
+                    cursorRing.style.height = '50px';
+                    cursorRing.style.borderColor = 'var(--color-gold-bright)';
+                    cursorRing.style.backgroundColor = 'rgba(203, 160, 67, 0.1)';
+                    cursorDot.style.width = '12px';
+                    cursorDot.style.height = '12px';
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursorRing.style.width = '36px';
+                    cursorRing.style.height = '36px';
+                    cursorRing.style.borderColor = 'var(--color-gold)';
+                    cursorRing.style.backgroundColor = 'transparent';
+                    cursorDot.style.width = '8px';
+                    cursorDot.style.height = '8px';
+                });
+            });
+        }
+
+        // Particle Canvas Dust Effect
+        const canvas = document.getElementById('particle-canvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let canvasWidth = canvas.width = window.innerWidth;
+            let canvasHeight = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                canvasWidth = canvas.width = window.innerWidth;
+                canvasHeight = canvas.height = window.innerHeight;
+            });
+
+            let mousePos = { x: null, y: null, radius: 120 };
+            window.addEventListener('mousemove', (e) => {
+                mousePos.x = e.clientX;
+                mousePos.y = e.clientY;
+            });
+            window.addEventListener('mouseleave', () => {
+                mousePos.x = null;
+                mousePos.y = null;
+            });
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvasWidth;
+                    this.y = Math.random() * canvasHeight;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.color = Math.random() > 0.5 ? 'rgba(203, 160, 67, 0.35)' : 'rgba(255, 255, 255, 0.2)';
+                    this.speedX = Math.random() * 0.4 - 0.2;
+                    this.speedY = Math.random() * 0.4 - 0.2;
+                    this.baseSize = this.size;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+
+                    if (this.x < 0) this.x = canvasWidth;
+                    if (this.x > canvasWidth) this.x = 0;
+                    if (this.y < 0) this.y = canvasHeight;
+                    if (this.y > canvasHeight) this.y = 0;
+
+                    if (mousePos.x !== null && mousePos.y !== null) {
+                        let dx = mousePos.x - this.x;
+                        let dy = mousePos.y - this.y;
+                        let dist = Math.sqrt(dx*dx + dy*dy);
+                        if (dist < mousePos.radius) {
+                            let force = (mousePos.radius - dist) / mousePos.radius;
+                            let dirX = dx / dist;
+                            let dirY = dy / dist;
+                            this.x -= dirX * force * 2;
+                            this.y -= dirY * force * 2;
+                            this.size = this.baseSize * (1 + force * 0.8);
+                        } else {
+                            if (this.size > this.baseSize) {
+                                this.size -= 0.05;
+                            }
+                        }
+                    }
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                }
+            }
+
+            const initParticles = () => {
+                particles = [];
+                const count = Math.min(100, Math.floor((canvasWidth * canvasHeight) / 16000));
+                for (let i = 0; i < count; i++) {
+                    particles.push(new Particle());
+                }
+            };
+            initParticles();
+
+            const animateParticles = () => {
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                requestAnimationFrame(animateParticles);
+            };
+            animateParticles();
+        }
+
+        // Hero Parallax Scroll
+        window.addEventListener('scroll', () => {
+            const heroVideo = document.querySelector('.hero-video');
+            const heroContent = document.querySelector('.hero-content');
+            if (heroVideo && window.scrollY < window.innerHeight) {
+                let scrollVal = window.scrollY;
+                heroVideo.style.transform = `translateY(${scrollVal * 0.4}px)`;
+                if (heroContent) {
+                    heroContent.style.opacity = 1 - (scrollVal / (window.innerHeight * 0.8));
+                    heroContent.style.transform = `translateY(${scrollVal * 0.1}px)`;
+                }
+            }
+        });
+
+        // Mouse Hover Glow for Service Cards
+        const glowCards = document.querySelectorAll('.service-card');
+        glowCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+
+        // Heading Reveal Wrapping
+        const animatedHeadings = document.querySelectorAll('h2');
+        animatedHeadings.forEach(h => {
+            if (!h.classList.contains('reveal-text') && h.id !== 'navbar') {
+                const txt = h.innerHTML;
+                h.classList.add('reveal-text');
+                h.innerHTML = `<span>${txt}</span>`;
+            }
+        });
+
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.reveal-text').forEach(h => revealObserver.observe(h));
+
+        // Animated Statistics Counters
+        const statsCounters = document.querySelectorAll('.counter');
+        const runCounters = () => {
+            statsCounters.forEach(counter => {
+                const updateCount = () => {
+                    const target = +counter.getAttribute('data-target');
+                    const count = +counter.innerText;
+                    const speed = target > 100 ? 100 : 30;
+                    const increment = Math.ceil(target / speed);
+
+                    if (count < target) {
+                        counter.innerText = Math.min(target, count + increment);
+                        setTimeout(updateCount, 40);
+                    } else {
+                        counter.innerText = target + (target === 500 ? '+' : (target === 10 ? '+' : (target === 100 ? '%' : '')));
+                    }
+                };
+                updateCount();
+            });
+        };
+
+        const statsObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    runCounters();
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const statsSection = document.getElementById('stats');
+        if (statsSection) {
+            statsObserver.observe(statsSection);
+        }
+
+        // Floating Chatbot Engine
+        const chatbotBtn = document.getElementById('mexo-chatbot-btn');
+        const chatbot = document.getElementById('mexo-chatbot');
+        const chatCloseBtn = document.getElementById('chat-close-btn');
+        const chatSendBtn = document.getElementById('chat-send-btn');
+        const chatInput = document.getElementById('chat-input');
+        const chatBody = document.getElementById('chat-body');
+
+        let leadState = 0; // 0: Idle/Chatting, 1: Name collection, 2: Phone collection
+        let leadName = '';
+        let leadPhone = '';
+
+        chatbotBtn.addEventListener('click', () => {
+            chatbot.classList.toggle('active');
+            chatBody.scrollTop = chatBody.scrollHeight;
+        });
+
+        chatCloseBtn.addEventListener('click', () => {
+            chatbot.classList.remove('active');
+        });
+
+        const showTypingIndicator = () => {
+            const ind = document.createElement('div');
+            ind.className = 'typing-indicator';
+            ind.id = 'typing-indicator';
+            ind.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+            chatBody.appendChild(ind);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        };
+
+        const removeTypingIndicator = () => {
+            const ind = document.getElementById('typing-indicator');
+            if (ind) ind.remove();
+        };
+
+        const addChatMessage = (text, sender) => {
+            const msg = document.createElement('div');
+            msg.className = `chat-message ${sender}`;
+            let fmtText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            fmtText = fmtText.replace(/\n/g, '<br>');
+            msg.innerHTML = `<p>${fmtText}</p>`;
+            chatBody.appendChild(msg);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        };
+
+        const handleSuggestion = (type) => {
+            addChatMessage(type, 'outgoing');
+            showTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator();
+                let res = '';
+                if (type === 'Available Vehicles') {
+                    res = "Here are some of our premium available models:\n\n1. **Toyota Land Cruiser LC300** - LKR 95,000,000+\n2. **Mercedes-Benz G63 AMG** - LKR 115,000,000+\n3. **Land Rover Defender 110 V8** - LKR 85,000,000+\n\nWould you like details on pricing, custom features, or import sourcing?";
+                } else if (type === 'Finance Details') {
+                    res = "We cooperate with leading local leasing partners and private banks to offer premium vehicle financing packages with up to 5-year repayment plans and competitive interest rates.\n\nWould you like me to connect you with our financial desk?";
+                } else if (type === 'Vehicle Import') {
+                    res = "Importing a custom vehicle is our specialty! We source from premier auctions and certified dealer networks in Japan and Europe. Delivery time is usually 6-8 weeks from sourcing to Sri Lanka port clearance. We guarantee a transparent 100% auction sheet policy.\n\nShall we set up an import consulting appointment?";
+                } else if (type === 'Contact Us' || type === 'Book Appointment') {
+                    leadState = 1;
+                    res = "Let's get you set up! May I have your **Name** so our luxury consultants can contact you to schedule a consultation?";
+                }
+                addChatMessage(res, 'incoming');
+            }, 800);
+        };
+
+        const processIncomingMessage = (text) => {
+            showTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator();
+                let res = '';
+
+                if (leadState === 1) {
+                    leadName = text;
+                    leadState = 2;
+                    res = `Thank you, ${leadName}! What is your phone number so we can reach out?`;
+                    addChatMessage(res, 'incoming');
+                    return;
+                }
+
+                if (leadState === 2) {
+                    leadPhone = text;
+                    leadState = 0;
+
+                    // Fill contact form
+                    document.getElementById('name').value = leadName;
+                    document.getElementById('phone').value = leadPhone;
+                    document.getElementById('message').value = "Request from chatbot for booking/consultation.";
+
+                    res = `Excellent, ${leadName}! I have captured your details and populated them into the contact form on this page. You can review the form below and click 'Send on WhatsApp' to submit instantly. Our team will contact you shortly!`;
+                    addChatMessage(res, 'incoming');
+
+                    setTimeout(() => {
+                        const contactSec = document.getElementById('contact');
+                        if (contactSec) {
+                            const navH = document.getElementById('navbar').offsetHeight;
+                            window.scrollTo({
+                                top: contactSec.offsetTop - navH,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }, 1500);
+                    return;
+                }
+
+                const lower = text.toLowerCase();
+                if (lower.includes('price') || lower.includes('cost') || lower.includes('how much')) {
+                    res = "Our luxury vehicle sourcing starts at LKR 85,000,000 for Land Rover Defender, LKR 95,000,000 for Land Cruiser LC300, and LKR 115,000,000 for Mercedes G63. Exact prices depend on options, package details, and live auction exchange rates.\n\nWould you like a detailed price quote?";
+                } else if (lower.includes('import') || lower.includes('source') || lower.includes('japan') || lower.includes('europe')) {
+                    res = "We source custom-spec vehicles directly from Japanese auctions and premium European dealer networks. All cars have verified mileage and high auction grades. Delivery takes 6-8 weeks.\n\nWould you like us to search for a specific model?";
+                } else if (lower.includes('leasing') || lower.includes('finance') || lower.includes('loan')) {
+                    res = "We offer flexible financing partnerships with up to 5-year repayment options. Interest rates are competitive, and our financial desk can assist you with all documentation.\n\nWould you like a leasing quote?";
+                } else if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) {
+                    res = "Hello! 👋 I am your MEXO AI Assistant. How can I assist you with your luxury vehicle import today?";
+                } else if (lower.includes('g63') || lower.includes('g-class') || lower.includes('g wagon') || lower.includes('mercedes')) {
+                    res = "The Mercedes G63 AMG starts at LKR 115,000,000. It features a 4.0L twin-turbo V8, 577 HP, and high AMG spec options. Sourced directly from European dealer networks.\n\nWould you like us to source one for you?";
+                } else if (lower.includes('lc300') || lower.includes('land cruiser') || lower.includes('toyota')) {
+                    res = "The Toyota Land Cruiser LC300 is available for import sourcing starting at LKR 95,000,000. Sourced from Japan or Europe in Diesel ZX/GR Sport configurations.\n\nWould you like to start search?";
+                } else if (lower.includes('defender') || lower.includes('land rover')) {
+                    res = "The Land Rover Defender 110 starts at LKR 85,000,000. Sourced directly from UK/Europe. Configurations in petrol/diesel hybrid or the supercharged V8.\n\nWould you like details?";
+                } else {
+                    res = "I appreciate your message. For specialized options, vehicle specs, or direct bidding access, our luxury consultants are ready to assist.\n\nType **'Book'** or click **'Book Appointment'** to schedule a call.";
+                }
+
+                addChatMessage(res, 'incoming');
+            }, 800);
+        };
+
+        const sendMessage = (text) => {
+            if (!text.trim()) return;
+            addChatMessage(text, 'outgoing');
+            chatInput.value = '';
+            processIncomingMessage(text);
+        };
+
+        chatSendBtn.addEventListener('click', () => {
+            sendMessage(chatInput.value);
+        });
+
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage(chatInput.value);
+            }
+        });
+
+        // Speech Recognition Setup
+        const voiceBtn = document.getElementById('chat-voice-btn');
+        if (voiceBtn) {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const rec = new SpeechRec();
+                rec.continuous = false;
+                rec.lang = 'en-US';
+                rec.interimResults = false;
+
+                voiceBtn.addEventListener('click', () => {
+                    if (voiceBtn.classList.contains('listening')) {
+                        rec.stop();
+                    } else {
+                        voiceBtn.classList.add('listening');
+                        rec.start();
+                    }
+                });
+
+                rec.onresult = (event) => {
+                    const txt = event.results[0][0].transcript;
+                    chatInput.value = txt;
+                    voiceBtn.classList.remove('listening');
+                    sendMessage(txt);
+                };
+
+                rec.onerror = () => voiceBtn.classList.remove('listening');
+                rec.onend = () => voiceBtn.classList.remove('listening');
+            } else {
+                voiceBtn.style.display = 'none';
+            }
+        }
+
+        // WhatsApp Floating Button Action
+        function openWhatsApp() {
+            const msg = encodeURIComponent("Hello MEXO AUTO HUB, I'm interested in sourcing a luxury vehicle.");
+            window.open(`https://wa.me/94779652407?text=${msg}`, '_blank');
+        }
+
+        const whatsappFloat = document.getElementById('whatsapp-btn');
+        if (whatsappFloat) {
+            setInterval(() => {
+                whatsappFloat.classList.add('whatsapp-bounce');
+                setTimeout(() => {
+                    whatsappFloat.classList.remove('whatsapp-bounce');
+                }, 1000);
+            }, 5000);
+        }
+
+        // Our Imports Collection Marquee Init
+        const initializeImportsMarquee = () => {
+            const track = document.getElementById('brand-marquee-track');
+            if (!track) return;
+
+            const brandList = [
+                {
+                    name: 'Toyota',
+                    logo: `<svg viewBox="0 0 24 24" class="w-16 h-16 text-zinc-800 transition-colors duration-500 hover:text-zinc-600" fill="currentColor">
+                              <path d="M12 3.848C5.223 3.848 0 7.298 0 12c0 4.702 5.224 8.152 12 8.152S24 16.702 24 12c0-4.702-5.223-8.152-12-8.152zm7.334 3.839c0 1.08-1.725 1.913-4.488 2.246-.26-2.58-1.005-4.279-1.963-4.913 2.948.184 6.45 1.227 6.45 2.667zM12 16.401c-.96 0-1.746-1.5-1.808-4.389.577.047 1.18.072 1.808.072.628 0 1.23-.025 1.807-.072-.061 2.89-.847 4.389-1.807 4.389zm0-6.308c-.59 0-1.155-.019-1.69-.054.261-1.728.92-3.15 1.69-3.15.77 0 1.428 1.422 1.689 3.15-.535.034-1.099.054-1.689.054zm-.882-5.075c-.956.633-1.706 2.333-1.964 4.915C6.391 9.6 4.665 8.767 4.665 7.687c0-1.44 3.504-2.49 6.453-2.669zM2.037 11.68a5.265 5.265 0 011.048-3.164c.27 1.547 2.522 2.881 5.972 3.37V12c0 3.772.879 6.203 2.087 6.97-5.107-.321-9.107-3.48-9.107-7.29zm10.823 7.29c1.207-.767 2.087-3.198 2.087-6.97v-.115c3.447-.488 5.704-1.826 5.972-3.37a5.26 5.26 0 011.049 3.165c-.004 3.81-4.008 6.969-9.109 7.29z"/>
+                          </svg>`
+                },
+                {
+                    name: 'Mercedes-Benz',
+                    logo: `<svg viewBox="0 0 100 100" class="w-16 h-16 text-zinc-800" fill="none" stroke="currentColor" stroke-width="4">
+                              <circle cx="50" cy="50" r="45" />
+                              <line x1="50" y1="5" x2="50" y2="50" />
+                              <line x1="50" y1="50" x2="11" y2="72.5" />
+                              <line x1="50" y1="50" x2="89" y2="72.5" />
+                          </svg>`
+                },
+                {
+                    name: 'BMW',
+                    logo: `<svg viewBox="0 0 100 100" class="w-16 h-16">
+                              <circle cx="50" cy="50" r="48" fill="#18181b" />
+                              <circle cx="50" cy="50" r="35" fill="none" stroke="#ffffff" stroke-width="2" />
+                              <path d="M 50 15 A 35 35 0 0 1 85 50 L 50 50 Z" fill="#00a2e8" />
+                              <path d="M 85 50 A 35 35 0 0 1 50 85 L 50 50 Z" fill="#ffffff" />
+                              <path d="M 50 85 A 35 35 0 0 1 15 50 L 50 50 Z" fill="#00a2e8" />
+                              <path d="M 15 50 A 35 35 0 0 1 50 15 L 50 50 Z" fill="#ffffff" />
+                              <text x="50" y="12" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#ffffff" text-anchor="middle">BMW</text>
+                          </svg>`
+                },
+                {
+                    name: 'Audi',
+                    logo: `<svg viewBox="0 0 90 30" class="w-24 h-10 text-zinc-800" fill="none" stroke="currentColor" stroke-width="4.5">
+                              <circle cx="18" cy="15" r="11" />
+                              <circle cx="34" cy="15" r="11" />
+                              <circle cx="50" cy="15" r="11" />
+                              <circle cx="66" cy="15" r="11" />
+                          </svg>`
+                },
+                {
+                    name: 'Lexus',
+                    logo: `<svg viewBox="0 0 100 60" class="w-20 h-12 text-zinc-800" fill="none" stroke="currentColor" stroke-width="4.5">
+                              <ellipse cx="50" cy="30" rx="45" ry="25" />
+                              <path d="M 28 17 L 43 17 L 35 38 L 73 38 L 73 32 L 40 32 L 46 17 Z" fill="currentColor" stroke="none" />
+                          </svg>`
+                },
+                {
+                    name: 'Land Rover',
+                    logo: `<svg viewBox="0 0 120 60" class="w-24 h-12">
+                              <ellipse cx="60" cy="30" rx="55" ry="26" fill="#045933" stroke="#e0b85a" stroke-width="2" />
+                              <ellipse cx="60" cy="30" rx="51" ry="22" fill="none" stroke="#e0b85a" stroke-width="0.8" />
+                              <text x="60" y="36" font-family="'Inter', 'Montserrat', Arial, sans-serif" font-size="11" font-weight="900" letter-spacing="0.5" fill="#e0b85a" text-anchor="middle">LAND ROVER</text>
+                              <path d="M 12 30 L 16 30 M 104 30 L 108 30" stroke="#e0b85a" stroke-width="1.5" />
+                          </svg>`
+                }
+            ];
+
+            const logoCardsHTML = brandList.map(brand => `
+                <div class="brand-card bg-[#f3f4f6] rounded-2xl flex items-center justify-center p-4 w-44 h-24 border border-zinc-200/50 hover:border-[#cba043] transition-all duration-500 filter grayscale hover:grayscale-0 hover:scale-105 shadow-sm hover:shadow-lg cursor-pointer select-none">
+                    ${brand.logo}
+                </div>
+            `).join('');
+
+            // Duplicate the array elements to ensure it forms a continuous loop
+            const setHTML = `${logoCardsHTML}${logoCardsHTML}${logoCardsHTML}`;
+            track.innerHTML = `${setHTML}${setHTML}`;
+        };
+
+        initializeImportsMarquee();
     </script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
